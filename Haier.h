@@ -60,49 +60,6 @@ private:
     byte poll[13] = {255,255,10,0,0,0,0,0,1,1,77,1,90};
     byte on[13] = {255,255,10,0,0,0,0,0,1,1,77,2,91};
 
-
-
-public:
-
-    Haier() : PollingComponent(5 * 1000) {
-        lastCRC = 0;
-    }
-
-
-    
-    void setup() override {
-        
-        Serial.begin(9600);
-        
-        
-    }
-
-    void loop() override  {
-
-
-        if (Serial.available() > 0) {
-            
-			if (Serial.read() != 255) return;
-			if (Serial.read() != 255) return;
-			
-			data[0] = 255;
-			data[1] = 255;
-
-            Serial.readBytes(data+2, sizeof(data)-2);
-
-            readData();
-
-        }
-
-    }
-
-    void update() override {
-            
-        Serial.write(poll, sizeof(poll));
-        auto raw = getHex(poll, sizeof(poll));
-        ESP_LOGD("Haier", "POLL: %s ", raw.c_str());
-    }
-
 protected:
     ClimateTraits traits() override {
         auto traits = climate::ClimateTraits();
@@ -118,14 +75,42 @@ protected:
         return traits;
     }
 
+
+public:
+
+    Haier() : PollingComponent(5 * 1000) {
+        lastCRC = 0;
+    }
+
+    void setup() override {
+        Serial.begin(9600);   
+    }
+
+    void loop() override  {
+        if (Serial.available() > 0) {
+            
+			if (Serial.read() != 255) return;
+			if (Serial.read() != 255) return;
+			
+			data[0] = 255;
+			data[1] = 255;
+
+            Serial.readBytes(data+2, sizeof(data)-2);
+            readData();
+        }
+    }
+
+    void update() override {
+        Serial.write(poll, sizeof(poll));
+        auto raw = getHex(poll, sizeof(poll));
+        ESP_LOGD("Haier", "POLL: %s ", raw.c_str());
+    }
+
 public:
 
     void readData() {
-
-
         auto raw = getHex(data, sizeof(data));
         ESP_LOGD("Haier", "Readed message: %s ", raw.c_str());
-
 
         byte check = data[CRC];
 
@@ -135,7 +120,6 @@ public:
             ESP_LOGD("Haier", "Invalid checksum");
             return;
         }
-
 
         lastCRC = check;
 
@@ -147,7 +131,6 @@ public:
             mode = CLIMATE_MODE_OFF;
 
         } else {
-
             switch (data[MODE]) {
                 case MODE_COOL:
                     mode = CLIMATE_MODE_COOL;
@@ -158,14 +141,10 @@ public:
                 default:
                     mode = CLIMATE_MODE_AUTO;
             }
-
-
         }
 
         this->publish_state();
-
     }
-
 
     void control(const ClimateCall &call) override {
 
@@ -188,7 +167,6 @@ public:
                     break;
             }
 
-
         if (call.get_target_temperature().has_value()) {
             data[SET_TEMPERATURE] = (uint16) call.get_target_temperature().value() - 16;
         }
@@ -200,10 +178,7 @@ public:
         data[11] = 95;
 
         sendData(data, sizeof(data));
-
-
     }
-
 
     void sendData(byte * message, byte size) {
 
@@ -213,7 +188,6 @@ public:
 
         auto raw = getHex(message, size);
         ESP_LOGD("Haier", "Sended message: %s ", raw.c_str());
-
     }
 
     String getHex(byte * message, byte size) {
@@ -227,8 +201,6 @@ public:
         raw.toUpperCase();
 
         return raw;
-
-
     }
 
     byte getChecksum(const byte * message, size_t size) {
@@ -239,12 +211,7 @@ public:
             crc += message[i];
 
         return crc;
-
     }
-
-
-
-
 };
 
 

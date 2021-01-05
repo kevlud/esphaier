@@ -1,32 +1,34 @@
+substitutions:
+  devicename: haier_parapet
+
 esphome:
-  name: haier
+  name: $devicename
   platform: ESP8266
   board: d1_mini
   includes:
     - Haier.h
 
-
 logger:
   level: DEBUG
   baud_rate: 0 #Important. You can't use serial port
-  
-  
-wifi:
-  ssid: ""
-  password: ""
 
+wifi:
+  fast_connect: true
+  ssid: "O2 Novy"
+  password: "Ninajedoma"
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: $devicename
+    password: "Manzes1997"
 
 # Enable Home Assistant API
 api:
-  password: ""
 
 ota:
-  password: ""
 
+web_server:
+  port: 80
 
-
-  
-  
 climate:
   - platform: custom
     lambda: |-
@@ -34,4 +36,4 @@ climate:
       App.register_component(haier);
       return {haier};
     climates:
-      - name: "Haier"
+      - name: "Haier Parapet"
