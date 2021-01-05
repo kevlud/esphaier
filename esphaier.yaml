@@ -1,5 +1,5 @@
 substitutions:
-  devicename: haier_parapet
+  devicename: haier
 
 esphome:
   name: $devicename
@@ -36,4 +36,4 @@ climate:
       App.register_component(haier);
       return {haier};
     climates:
-      - name: "Haier Parapet"
+      - name: "Haier"
