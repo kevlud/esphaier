@@ -1,7 +1,5 @@
 {
     "files.associations": {
-        "cstddef": "cpp",
-        "stdexcept": "cpp",
-        "string": "cpp"
+        "*.yaml": "home-assistant"
     }
 }

@@ -14,8 +14,8 @@ logger:
 
 wifi:
   fast_connect: true
-  ssid: "O2 Novy"
-  password: "Ninajedoma"
+  ssid: "smarthome"
+  password: "smarthome"
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: $devicename
